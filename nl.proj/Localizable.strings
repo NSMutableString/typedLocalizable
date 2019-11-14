@@ -1,6 +1,6 @@
-"cancel" = "Annuler";
-"next" = "Suivant";
-"previous" = "Précédent";
-"loading" = "Chargement";
+"general_cancel" = "Annuler";
+"general_next" = "Suivant";
+"general_previous" = "Précédent";
+"general__loading" = "Chargement";
 "close" = "Fermer";
 "pullToRefresh" = "Tirer pour rafraîchir";

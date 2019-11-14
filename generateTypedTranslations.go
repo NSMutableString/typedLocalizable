@@ -7,6 +7,7 @@ import (
     "os"
     "regexp"
     "strings"
+    "github.com/iancoleman/strcase"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func readFile(filePath string) {
         match, _ := regexp.MatchString("\"(...+)\" = \"(...+)\";", line)
         if match {
             s := strings.Split(line, "\"")
-            fmt.Println(s[1]) // key
+            fmt.Println(strcase.ToLowerCamel(s[1])) // key
         }
     }
 
