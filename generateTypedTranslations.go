@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "os"
+    "regexp"
 )
 
 func main() {
@@ -22,7 +23,11 @@ func readFile(filePath string) {
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
         line := scanner.Text()
-        fmt.Println(line)
+
+        match, _ := regexp.MatchString("\"(...+)\" = \"(...+)\";", line)
+        if match {
+            fmt.Println(line)
+        }
     }
 
     if err := scanner.Err(); err != nil {
