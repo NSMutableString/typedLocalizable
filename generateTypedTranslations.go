@@ -6,6 +6,7 @@ import (
     "log"
     "os"
     "regexp"
+    "strings"
 )
 
 func main() {
@@ -26,7 +27,8 @@ func readFile(filePath string) {
 
         match, _ := regexp.MatchString("\"(...+)\" = \"(...+)\";", line)
         if match {
-            fmt.Println(line)
+            s := strings.Split(line, "\"")
+            fmt.Println(s[1]) // key
         }
     }
 
