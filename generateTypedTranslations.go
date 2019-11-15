@@ -14,7 +14,7 @@ import (
 
 func main() {
 	fmt.Println("Generate typed translations from Localizable.strings")
-	readFile("./nl.proj/Localizable.strings")
+	readFile("./Resources/nl.proj/Localizable.strings")
 }
 
 func readFile(filePath string) {
