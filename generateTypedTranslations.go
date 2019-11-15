@@ -15,7 +15,8 @@ import (
 func main() {
     validateArguments()
     file := os.Args[1]
-    readFile(file)
+    keys := readKeysFromLocalizableFile(file)
+    writeFile(keys)
 }
 
 func validateArguments() {
@@ -25,20 +26,14 @@ func validateArguments() {
     }
 }
 
-func readFile(filePath string) {
+func readKeysFromLocalizableFile(filePath string) []string {
     file, err := os.Open(filePath)
     if err != nil {
         log.Fatal(err)
     }
     defer file.Close()
 
-    var translationsBuffer bytes.Buffer
-    codeGenerator := iOSCodeGenerator {
-        buffer: &translationsBuffer,
-    }
-    codeGenerator.writeHeader()
-    codeGenerator.writeContainingStructStart()
-
+    translationKeys := []string{}
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
         line := scanner.Text()
@@ -46,18 +41,30 @@ func readFile(filePath string) {
         if match {
             parts := strings.Split(line, "\"")
             key := parts[1]
-            propertyName := strcase.ToLowerCamel(key)
-            codeGenerator.writeTranslationKeyLine(key, propertyName)
+            translationKeys = append(translationKeys, key) 
         }
     }
 
+    if err := scanner.Err(); err != nil {
+        log.Fatal(err)
+    }
+    return translationKeys
+}
+
+func writeFile(translationKeys []string) {
+    var translationsBuffer bytes.Buffer
+    codeGenerator := iOSCodeGenerator {
+        buffer: &translationsBuffer,
+    }
+    codeGenerator.writeHeader()
+    codeGenerator.writeContainingStructStart()
+    for _, key := range translationKeys {
+        propertyName := strcase.ToLowerCamel(key)
+        codeGenerator.writeTranslationKeyLine(key, propertyName)
+    }
     codeGenerator.writeContainingStructEnd()
 
     fileData := []byte(translationsBuffer.String())
     ioutil.WriteFile("Translations.swift", fileData, 0644)
     fmt.Println("Code generation: SUCCESS")
-
-    if err := scanner.Err(); err != nil {
-        log.Fatal(err)
-    }
 }
