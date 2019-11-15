@@ -13,8 +13,16 @@ import (
 )
 
 func main() {
-	fmt.Println("Generate typed translations from Localizable.strings")
-	readFile("./Resources/nl.proj/Localizable.strings")
+    validateArguments()
+    file := os.Args[1]
+    readFile(file)
+}
+
+func validateArguments() {
+    if len(os.Args) != 2 {
+        fmt.Println("Usage:", os.Args[0], "FILE")
+        os.Exit(0)
+    }
 }
 
 func readFile(filePath string) {
@@ -47,6 +55,7 @@ func readFile(filePath string) {
 
     fileData := []byte(translationsBuffer.String())
     ioutil.WriteFile("Translations.swift", fileData, 0644)
+    fmt.Println("Code generation: SUCCESS")
 
     if err := scanner.Err(); err != nil {
         log.Fatal(err)
