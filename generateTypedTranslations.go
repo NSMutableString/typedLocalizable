@@ -26,8 +26,9 @@ func readFile(filePath string) {
 
     var translationsBuffer bytes.Buffer
 
-    writeHeader(&translationsBuffer)
-    writeContainingStructStart(&translationsBuffer)
+    codeGenerator := iOSCodeGenerator {}
+    codeGenerator.writeHeader(&translationsBuffer)
+    codeGenerator.writeContainingStructStart(&translationsBuffer)
 
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
@@ -37,11 +38,11 @@ func readFile(filePath string) {
             parts := strings.Split(line, "\"")
             key := parts[1]
             propertyName := strcase.ToLowerCamel(key)
-            writeTranslationKeyLine(&translationsBuffer, key, propertyName)
+            codeGenerator.writeTranslationKeyLine(&translationsBuffer, key, propertyName)
         }
     }
 
-    writeContainingStructEnd(&translationsBuffer)
+    codeGenerator.writeContainingStructEnd(&translationsBuffer)
 
     fileData := []byte(translationsBuffer.String())
     ioutil.WriteFile("Translations.swift", fileData, 0644)

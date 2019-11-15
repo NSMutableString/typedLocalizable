@@ -4,7 +4,17 @@ import (
     "bytes"
 )
 
-func writeHeader(buffer *bytes.Buffer) {
+type codeGenerator interface {
+    writeHeader(buffer *bytes.Buffer)
+    writeTranslationKeyLine(buffer *bytes.Buffer, key string, propertyName string)
+    writeContainingStruct(buffer *bytes.Buffer, name string)
+    writeContainingStructStart(buffer *bytes.Buffer)
+    writeContainingStructEnd(buffer *bytes.Buffer)
+}
+
+type iOSCodeGenerator struct {}
+
+func(generator iOSCodeGenerator) writeHeader(buffer *bytes.Buffer) {
     buffer.WriteString("//\n")
     buffer.WriteString("//  Translations.swift\n")
     buffer.WriteString("//\n")
@@ -14,18 +24,18 @@ func writeHeader(buffer *bytes.Buffer) {
     buffer.WriteString("\n")
 }
 
-func writeTranslationKeyLine(buffer *bytes.Buffer, key string, propertyName string) {
+func(generator iOSCodeGenerator) writeTranslationKeyLine(buffer *bytes.Buffer, key string, propertyName string) {
     buffer.WriteString("\tstatic let " + propertyName + " = \"" +  key + "\"\n")
 }
 
-func writeContainingStruct(buffer *bytes.Buffer, name string) {
+func(generator iOSCodeGenerator) writeContainingStruct(buffer *bytes.Buffer, name string) {
     buffer.WriteString("public struct Translations {\n")
 }
 
-func writeContainingStructStart(buffer *bytes.Buffer) {
+func(generator iOSCodeGenerator) writeContainingStructStart(buffer *bytes.Buffer) {
     buffer.WriteString("public struct Translations {\n")
 }
 
-func writeContainingStructEnd(buffer *bytes.Buffer) {
+func(generator iOSCodeGenerator) writeContainingStructEnd(buffer *bytes.Buffer) {
     buffer.WriteString("}\n")
 }
