@@ -10,6 +10,7 @@ import (
     "bytes"
     "io/ioutil"
     "github.com/iancoleman/strcase"
+    "errors"
 )
 
 func main() {
@@ -37,10 +38,8 @@ func readKeysFromLocalizableFile(filePath string) []string {
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
         line := scanner.Text()
-        match, _ := regexp.MatchString("\"(...+)\" = \"(...+)\";", line)
-        if match {
-            parts := strings.Split(line, "\"")
-            key := parts[1]
+        key, err := extractKeyFromLine(line)
+        if err == nil {
             translationKeys = append(translationKeys, key) 
         }
     }
@@ -67,4 +66,13 @@ func writeFile(translationKeys []string) {
     fileData := []byte(translationsBuffer.String())
     ioutil.WriteFile("Translations.swift", fileData, 0644)
     fmt.Println("Code generation: SUCCESS")
+}
+
+func extractKeyFromLine(line string) (string, error) {
+    match, _ := regexp.MatchString("\"(...+)\" = \"(...+)\";", line)
+    if match {
+        parts := strings.Split(line, "\"")
+        return parts[1], nil
+    }
+    return "", errors.New("Line did not match regex")
 }
