@@ -27,6 +27,9 @@ func(generator iOSCodeGenerator) writeHeader() {
 
 func(generator iOSCodeGenerator) writeContainingStructStart() {
     generator.buffer.WriteString("public struct Translations {\n")
+    generator.buffer.WriteString("\n")
+    generator.buffer.WriteString("\tprivate init() {}\n")
+    generator.buffer.WriteString("\n")
 }
 
 func(generator iOSCodeGenerator) writeTranslationKeyLine(key string, propertyName string) {
