@@ -2,27 +2,29 @@ package main
 
 import (
     "bufio"
+    "bytes"
+    "errors"
     "fmt"
+    "github.com/iancoleman/strcase"
+    "io/ioutil"
     "log"
     "os"
+    "path"
     "regexp"
     "strings"
-    "bytes"
-    "io/ioutil"
-    "github.com/iancoleman/strcase"
-    "errors"
 )
 
 func main() {
     validateArguments()
     file := os.Args[1]
+    outputDir := os.Args[2]
     keys := readKeysFromLocalizableFile(file)
-    writeFile(keys)
+    writeFile(keys, outputDir)
 }
 
 func validateArguments() {
-    if len(os.Args) != 2 {
-        fmt.Println("Usage:", os.Args[0], "FILE")
+    if len(os.Args) != 3 {
+        fmt.Println("Usage:", os.Args[0], "FILE OUTPUT_DIR")
         os.Exit(0)
     }
 }
@@ -40,7 +42,7 @@ func readKeysFromLocalizableFile(filePath string) []string {
         line := scanner.Text()
         key, err := extractKeyFromLine(line)
         if err == nil {
-            translationKeys = append(translationKeys, key) 
+            translationKeys = append(translationKeys, key)
         }
     }
 
@@ -50,9 +52,9 @@ func readKeysFromLocalizableFile(filePath string) []string {
     return translationKeys
 }
 
-func writeFile(translationKeys []string) {
+func writeFile(translationKeys []string, outputDir string) {
     var translationsBuffer bytes.Buffer
-    codeGenerator := iOSCodeGenerator {
+    codeGenerator := iOSCodeGenerator{
         buffer: &translationsBuffer,
     }
     codeGenerator.writeHeader()
@@ -64,7 +66,8 @@ func writeFile(translationKeys []string) {
     codeGenerator.writeContainingStructEnd()
 
     fileData := []byte(translationsBuffer.String())
-    ioutil.WriteFile("Translations.swift", fileData, 0644)
+    outputFile := path.Join(path.Dir(outputDir), "Translations.swift")
+    ioutil.WriteFile(outputFile, fileData, 0644)
     fmt.Println("Code generation: SUCCESS")
 }
 

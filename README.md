@@ -29,5 +29,5 @@ public struct Translations {
 
 ```
 go build
-./typedLocalizable ./Resources/nl.proj/Localizable.strings
+./typedLocalizable ./Resources/nl.proj/Localizable.strings .
 ```
